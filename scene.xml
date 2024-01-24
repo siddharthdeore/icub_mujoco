@@ -1,0 +1,25 @@
+<mujoco model="iCub">
+  <!-- Default scene with skybox and ground plane -->
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512"
+      height="3072" />
+    <texture name="plane" type="2d" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      width="128" height="128" mark="cross" markrgb=".8 .8 .8" />
+    <material name="plane" reflectance="0.2" texture="plane" texrepeat="5 5" texuniform="true" />
+  </asset>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0" />
+    <rgba haze="0.15 0.25 0.35 1" />
+    <global azimuth="120" elevation="-20" />
+  </visual>
+
+  <worldbody>
+    <light pos="30 20 10.5" dir="0 0 -1" directional="true" />
+    <geom name='floor' type='plane' conaffinity='1' condim='3' contype='1'
+      material='plane' pos='0 0 -0.8' size='0 0 1' />
+  </worldbody>
+
+  <option cone="elliptic" impratio="10" />
+
+</mujoco>
