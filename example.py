@@ -1,14 +1,15 @@
 from utils.MujocoRobot import *
 
-#mjcf_path = "iCubGazeboV2_6.xml" 
-mjcf_path = "mujoco_descriptions/ergoCubGazeboV1.xml"
-
+#mjcf_path = "iCubGazeboV2_6.xml" , iRonCub-Mk1
+mjcf_path = "mujoco_descriptions/iRonCub-Mk1.xml"
+ergo = False
 if "ergo" in mjcf_path:
     pos_0 = [0, 0, 0.0]
     ergo = True
+elif "iRonCub" in mjcf_path:
+    pos_0 = [0, 0, -0.1]
 else:
-    pos_0 = [0, 0, -0.2]
-    ergo = False
+    pos_0 = [0, 0, -0.1]
 
 robot = MujocoRobot(mjcf_path, from_path=True)
 
@@ -34,16 +35,17 @@ with mujoco.viewer.launch_passive(robot.model, robot.data) as viewer:
         viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONVEXHULL] = 0
         viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = 0
 
-    robot.set_ctrl("l_shoulder_roll", 0.5)
-    robot.set_ctrl("r_shoulder_roll", 0.5)
+    robot.set_ctrl("l_shoulder_roll", 1)
+    robot.set_ctrl("r_shoulder_roll", 1)
+    robot.set_ctrl("torso_pitch", 0.3)
 
     while viewer.is_running():
         t = time.monotonic() - wall
 
         # observe state
         # compute control
-        st = np.sin(t) ** 2 * 0.5 + 0.1
-        ct = np.cos(t) ** 2 * 0.5 + 0.1
+        st = np.sin(t) ** 2 * 0.1 + 0.1
+        ct = np.cos(t) ** 2 * 0.1 + 0.1
 
         # set control
         robot.set_relative_ctrl(["l_shoulder_roll", "l_elbow"], [st, 2 * st])

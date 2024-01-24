@@ -3,16 +3,19 @@ from utils.MujocoRobot import *
 
 icub_path = "robot_descriptions/icub-models/iCub/"
 ergocub_path = "robot_descriptions/ergocub-software/urdf/ergoCub/"
+ironcub_mk1_path = "robot_descriptions/ironcub-mk1-software/models/iRonCub-Mk1/iRonCub"
 
 icub_names = ["iCubGazeboV2_6", "iCubGazeboV2_5", "iCubGazeboV2_7", "iCubGenova09"]
 ergocub_names = ["ergoCubGazeboV1", "ergoCubGazeboV1_1", "ergoCubSN000", "ergoCubSN001"]
+ironcub_mk1_names = ["iRonCub-Mk1"]
 
 icub_descriptions = {model: icub_path+"robots/{}/model.urdf".format(model) for model in icub_names}
 ergocub_descriptions = {model: ergocub_path+"robots/{}/model.urdf".format(model) for model in ergocub_names}
+ironcub_mk1_descriptions = {model: ironcub_mk1_path+"/robots/{}/model_stl.urdf".format(model) for model in ironcub_mk1_names}
 
 if __name__ == '__main__':
     args = ap.ArgumentParser()
-    args.add_argument('--model', type=str, default="iCubGazeboV2_6", help="model name")
+    args.add_argument('--model', type=str, default="iRonCub-Mk1", help="model name")
     args.add_argument('--kp', type=float, default=500, help="joint stiffness")
     args.add_argument('--damping', type=float, default=50.0, help="joint damping")
     args.add_argument('--add_floating', type=bool, default=True)
@@ -35,10 +38,13 @@ if __name__ == '__main__':
     elif args.model in ergocub_descriptions.keys():
         filepath = ergocub_descriptions[args.model]
         meshdir = ergocub_path + "meshes/simmechanics"
+    elif args.model in ironcub_mk1_names:
+        filepath = ironcub_mk1_descriptions[args.model]
+        meshdir = ironcub_mk1_path + "/meshes/stl_bin"
     else:
         raise ValueError("model not found")
     
-    xml_string = generate_mjcf_scene(filepath, meshdir, root_link="root_link", kp=args.kp, damping=args.damping, add_floating=args.add_floating)
+    xml_string = generate_mjcf_scene(filepath, meshdir, root_link="base_link", kp=args.kp, damping=args.damping, add_floating=args.add_floating)
 
     to_save = update_meshdir_xml_str(xml_string, "../"+meshdir)
 

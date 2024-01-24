@@ -215,7 +215,7 @@ def update_meshdir(xml_file_path, relative_path, root_link="root_link", add_floa
     compiler = mujoco_elem.find('.//compiler[@meshdir]')
     if compiler is None:
         compiler = ET.Element(
-            'compiler', {"angle": "radian", "autolimits": "true", 'meshdir': relative_path, 'discardvisual': "false"})
+            'compiler', {"angle": "radian", "autolimits": "true", 'meshdir': relative_path, 'discardvisual': "false", 'balanceinertia': "true"})
         # root.append(compiler)
         mujoco_elem.insert(0, compiler)
     else:
@@ -302,10 +302,11 @@ def combine_mjcf(model_mjcf_string, scene_mjcf="scene.xml"):
 
 
 def exclude_collisions(xml_string):
-    for i in range(5):
+    for i in range(10):
         robot = MujocoRobot(xml_string, from_path=False)
         mujoco.mj_resetDataKeyframe(robot.model, robot.data, 0)
-        mujoco.mj_step(robot.model, robot.data)
+        for i in range(10):
+            mujoco.mj_step(robot.model, robot.data)
         mujoco.mj_saveLastXML("temp.xml", robot.model)
         contact_pairs = robot.get_contact_pair()
         xml_string = add_contact_pair("temp.xml", contact_pairs)
